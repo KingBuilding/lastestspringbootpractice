@@ -21,7 +21,6 @@ import java.util.Map;
 @Data
 public class JackSonAnnotation {
 
-
     private String username;
     private String password;
     private Integer age;
