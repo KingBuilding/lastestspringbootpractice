@@ -15,7 +15,8 @@ import java.util.Map;
 /**
  * @author 金🗡
  * @date 2020/4/24 16:08
- * @description: springMVC  @JsonAnyGetter @JsonAnySetter 注解
+ * @description: springMVC  @JsonAnyGetter @JsonAnySetter 注解 会转换参数，
+ * 改变数据格式/属性
  */
 @Data
 public class JackSonAnnotation {
