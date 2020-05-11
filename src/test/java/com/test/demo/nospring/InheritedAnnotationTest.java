@@ -9,10 +9,10 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * @author 金🗡
- * @date 2020/4/20 11:14
- * @description:
+ * @date 2020/4/20 11 :14
+ * @description: Inherited 注解只能是继承父类(非接口)，才能得到父类的注解
  */
-public class AnnotationTest {
+public class InheritedAnnotationTest {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -49,26 +49,30 @@ public class AnnotationTest {
         {
             Annotation[] annotations = MyInheritedClass.class.getAnnotations();
             for (int i = 0; i < annotations.length; i++) {
-                System.out.println("MyInheritedClass"+annotations[i].annotationType());
+                System.out.println("MyInheritedClass" + annotations[i].annotationType());
+                System.err.print("表明继承可以继承注解");
             }
+
         }
         {
             Annotation[] annotations = MyInheritedClassUseInterface.class.getAnnotations();
             for (int i = 0; i < annotations.length; i++) {
-                System.out.println("MyInheritedClassUseInterface"+annotations[i].annotationType());
+                System.out.println("MyInheritedClassUseInterface" + annotations[i].annotationType());
+                System.err.print("表明实现可以继承注解");
             }
-       }
+        }
         {
             Annotation[] annotations = IInheritedInterface.class.getAnnotations();
             for (int i = 0; i < annotations.length; i++) {
-                System.out.println("IInheritedInterface"+annotations[i].annotationType());
+                System.out.println("IInheritedInterface" + annotations[i].annotationType());
+
             }
 
         }
         {
             Annotation[] annotations = IInheritedInterfaceChild.class.getAnnotations();
             for (int i = 0; i < annotations.length; i++) {
-                System.out.println("IInheritedInterfaceChild"+annotations[i].annotationType());
+                System.out.println("IInheritedInterfaceChild" + annotations[i].annotationType());
             }
         }
     }
