@@ -11,9 +11,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author 金🗡
  * @date 2020/4/10 18:47
- * @description:
+ * @description: 测试分布式追踪号在线城池类的透传
+ * @see TransmittableThreadLocal
  */
-public class TTL {
+public class TrackTransmitInThread {
 
     private static ThreadLocal local = new InheritableThreadLocal();
     static ExecutorService executors = Executors.newFixedThreadPool(4);
@@ -67,7 +68,7 @@ public class TTL {
      * @throws InterruptedException
      */
     @Test
-    public  void testAgentTransmittableThreadLocal() throws InterruptedException {
+    public void testAgentTransmittableThreadLocal() throws InterruptedException {
         parent.set("value-set-in-parent");
         while (true) {
             Runnable task = () -> {
