@@ -3,9 +3,6 @@ package com.test.demo.nospring;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
-import java.util.Arrays;
-
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * @author 金🗡
