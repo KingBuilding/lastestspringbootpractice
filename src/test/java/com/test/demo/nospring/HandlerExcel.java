@@ -1,5 +1,6 @@
 package com.test.demo.nospring;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author 金🗡
@@ -17,15 +19,13 @@ import java.util.Arrays;
  * @description:
  */
 public class HandlerExcel {
-    static String filePath1 = "C:\\Users\\jinjian\\Desktop\\银泰店.xls";//数据源
-    static String filePath2 = "C:\\Users\\jinjian\\Desktop\\总店.xls";//模板
+    static String filePath1 = "C:\\Users\\jinjian\\Desktop\\宁海杜晓娟.xls";//数据源
+    static String filePath2 = "C:\\Users\\jinjian\\Desktop\\1.xls";//模板
     static String filePath3 = "C:\\Users\\jinjian\\Desktop\\目标\\";//输出位置
-    static int rowNum = 2;
-    private static int count = 0;
-    private static BigDecimal bigDecimal = BigDecimal.ZERO;
+
 
     public static void main(String[] args) throws IOException {
-      readExcel(filePath1, filePath2, filePath3);
+        readExcel(filePath1, filePath2, filePath3);
     }
 
     /**
@@ -38,37 +38,57 @@ public class HandlerExcel {
         //定义工作簿
         Workbook read = getWorkbook(filePath1);//数据源
         Workbook write = getWorkbook(filePath2);//数据写入模板
+        int sheets = read.getNumberOfSheets();
 
-        Sheet sheet = read.getSheetAt(0);
-        int rows = sheet.getLastRowNum();
-        for (int i = 2; i <= rows; i++) {
-            Row row = sheet.getRow(i);
-            if (i < rows) {
 
-                System.out.println("处理行数：" + i);
-                handlerRow(write, row);
+        for (int n = 0; n < sheets; n++) {
+            Sheet sheet = read.getSheetAt(n);
+            int rows = sheet.getLastRowNum();//总列数
+            System.out.println("处理的sheet是：" + sheet.getSheetName() + "；总行数：" + sheet.getLastRowNum());
+            Sheet writeSheet;
+            if (write.getNumberOfSheets() <= n) {//说明已有的sheet小于要创建的
+                writeSheet = write.cloneSheet(n - 1);
             } else {
-                //等于
-                Row row1 = write.getSheetAt(0).createRow(rowNum);
-                Cell cell3 = row1.createCell(3);
-                cell3.setCellType(CellType.STRING);
-                cell3.setCellValue(count);
-
-                Cell cell7 = row1.createCell(7);
-                cell7.setCellType(CellType.STRING);
-                cell7.setCellValue(bigDecimal.toPlainString());
-
-
+                writeSheet = write.getSheetAt(n);
             }
+            write.setSheetName(n, sheet.getSheetName());
+            int count = 0;
+            int rowNum = 0;
+            BigDecimal bigDecimal = BigDecimal.ZERO;
+            for (int i = 4; i < rows; i++) {//从第四列开始
+                Row row = sheet.getRow(i);
+                System.out.println("处理的sheet是：" + sheet.getSheetName() + ";");
+                rowNum = i;//处理的行数
+                if (i < rows) {
+                    if (Objects.nonNull(row)) {
+                        System.out.println("处理行数：" + i);
+                        count = handlerRow(write, row, writeSheet, count, rowNum, bigDecimal);
+                        System.out.println("");
+                    } else {
+                        continue;
+                    }
 
+                }
+//                else {
+//                    //等于
+//                    Row row1 = write.getSheetAt(n).createRow(rowNum);
+//                    Cell cell3 = row1.createCell(3);
+//                    cell3.setCellType(CellType.STRING);
+//                    cell3.setCellValue(count);
+//
+//                    Cell cell7 = row1.createCell(7);
+//                    cell7.setCellType(CellType.STRING);
+//                    cell7.setCellValue(bigDecimal.toPlainString());
+//                }
+            }
+            System.out.println("生成总列数" + rowNum);
 
         }
 
 
-        System.out.println("生成总列数" + rowNum);
-        String ccc[]=   filePath2.split("\\\\");
-        System.out.println("输出文件位置："+filePath3+ccc[ccc.length-1]);
-        File file = new File(filePath3+ccc[ccc.length-1]);
+        String ccc[] = filePath1.split("\\\\");
+        System.out.println("输出文件位置：" + filePath3 + ccc[ccc.length - 1]);
+        File file = new File(filePath3 + ccc[ccc.length - 1]);
         String fileName = file.getName();
         System.out.println(fileName);
         write.write(new FileOutputStream(file));
@@ -81,44 +101,53 @@ public class HandlerExcel {
      * @param workbook 模板数据
      * @param row      数据源 row
      */
-    static void handlerRow(Workbook workbook, Row row) {
-        Sheet sheet = workbook.getSheetAt(0);
+    static int handlerRow(Workbook workbook, Row row, Sheet sheet, int count, int rowNum, BigDecimal bigDecimal) {
+        row.getCell(row.getLastCellNum() - 1).setCellType(CellType.STRING);
         String[] codes = row.getCell(row.getLastCellNum() - 1).getStringCellValue().split(",");
-        String[] sizes = row.getCell(8).getStringCellValue().split("-");
+        String[] sizes = row.getCell(9).getStringCellValue().split("-");
         for (int j = 0; j < codes.length; j++) {
             //创建单条记录
-            Row row1 = sheet.createRow(rowNum);
+            Row row1 = sheet.createRow(count+2);//从第二列开始写
             Cell temp = row1.createCell(0);
-            temp.setCellValue(rowNum - 1);
+            temp.setCellValue(1+count++);
 
 
-            serCell(row1, row, 1);
-            serCell(row1, row, 2);
+            serCell(row1, row, 1, 1);
+            serCell(row1, row, 2, 2);
             Cell cell3 = row1.createCell(3);
             cell3.setCellValue("1");
-            count = count + 1;
 
-            serCell(row1, row, 4);
-            serCell(row1, row, 5);
-            serCell(row1, row, 6);
-            serCell(row1, row, 7);
-            //总金额
-            bigDecimal = bigDecimal.add(new BigDecimal(row.getCell(7).getStringCellValue()));
 
-            Cell cell8 = row1.createCell(8);
-            cell8.setCellValue(sizes[j]);
-            Cell cell9 = row1.createCell(9);
+            serCell(row1, row, 4, 4);//单价
+            serCell(row1, row, 6, 5);//折扣
+            serCell(row1, row, 7, 6);//折后单价
+            serCell(row1, row, 8, 7);//折后金额
+            // 总金额
+//                row.getCell(7).setCellType(CellType.STRING);
+//            bigDecimal = bigDecimal.add(new BigDecimal(row.getCell(7).getStringCellValue()));//
+
+            Cell cell8 = row1.createCell(8);//尺寸
+            cell8.setCellValue(sizes[j]);//
+            Cell cell9 = row1.createCell(9);//码
             cell9.setCellValue(codes[j]);
             rowNum = rowNum + 1;
 
         }
-
+        return count;
     }
 
-    static void serCell(Row row1, Row row, int num) {
-        Cell cell4 = row1.createCell(num);
+    /**
+     * @param row1
+     * @param row
+     * @param num     原始cell 位置
+     * @param cellNum 需要创建的位置
+     */
+    static void serCell(Row row1, Row row, int num, int cellNum) {
+        Cell cell4 = row1.createCell(cellNum);
+
         row.getCell(num).setCellType(CellType.STRING);
         cell4.setCellValue(row.getCell(num).getStringCellValue());
+
     }
 
 
