@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * @author 金🗡
@@ -18,15 +19,13 @@ import java.math.BigDecimal;
 public class HandlerExcel {
     static String filePath1 = "C:\\Users\\jinjian\\Desktop\\银泰店.xls";//数据源
     static String filePath2 = "C:\\Users\\jinjian\\Desktop\\总店.xls";//模板
-    static String filePath3 = "C:\\Users\\jinjian\\Desktop\\目标\\银泰店.xls";//模板
-
+    static String filePath3 = "C:\\Users\\jinjian\\Desktop\\目标\\";//输出位置
     static int rowNum = 2;
     private static int count = 0;
     private static BigDecimal bigDecimal = BigDecimal.ZERO;
 
     public static void main(String[] args) throws IOException {
-        readExcel(filePath1, filePath2, filePath3);
-
+      readExcel(filePath1, filePath2, filePath3);
     }
 
     /**
@@ -67,7 +66,9 @@ public class HandlerExcel {
 
 
         System.out.println("生成总列数" + rowNum);
-        File file = new File(filePath3);
+        String ccc[]=   filePath2.split("\\\\");
+        System.out.println("输出文件位置："+filePath3+ccc[ccc.length-1]);
+        File file = new File(filePath3+ccc[ccc.length-1]);
         String fileName = file.getName();
         System.out.println(fileName);
         write.write(new FileOutputStream(file));
